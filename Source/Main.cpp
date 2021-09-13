@@ -1,4 +1,5 @@
 #include "Board.hpp"
+#include "Hand.hpp"
 #include <stdio.h>
 
 //Eerste 4 bits, waarde, windrichting, draaksoort
@@ -110,7 +111,15 @@ void print_tile(unsigned short tile) {
 
 int main() {
 	Board* board = new Board();
+	Hand* hand = new Hand();
 	board->GenerateWall();
-	Board::PrintWall(board->GetWall());
+	hand->AddTile((uint64)1 << (uint64)31);
+	hand->AddTile((uint64)1 << (uint64)32);
+	hand->AddTile((uint64)1 << (uint64)32);
+	hand->AddTile((uint64)1 << (uint64)33);
+	hand->DiscardTile((uint64)1 << (uint64)32);
+	//hand->AddTile((uint64) 1 << (uint64) 31);
+	hand->PrintHand();
+	//Board::PrintWall(board->GetWall());
 	delete board;
 }
