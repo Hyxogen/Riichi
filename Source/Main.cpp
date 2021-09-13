@@ -113,13 +113,16 @@ int main() {
 	Board* board = new Board();
 	Hand* hand = new Hand();
 	board->GenerateWall();
-	hand->AddTile((uint64)1 << (uint64)31);
-	hand->AddTile((uint64)1 << (uint64)32);
-	hand->AddTile((uint64)1 << (uint64)32);
-	hand->AddTile((uint64)1 << (uint64)33);
-	hand->DiscardTile((uint64)1 << (uint64)32);
+	//hand->AddTile((uint64)1 << (uint64)31);
+	//hand->AddTile((uint64)1 << (uint64)32);
+	//hand->AddTile((uint64)1 << (uint64)33);
 	//hand->AddTile((uint64) 1 << (uint64) 31);
 	hand->PrintHand();
-	//Board::PrintWall(board->GetWall());
+	Board::PrintWall(board->GetWall());
+	/*for (uint64 i = 1; i < (1ull << 63); i <<= 1ull) {
+		Hand::PrintTile(i);
+		printf(" ");
+	}*/
+	Board::PrintWallWithHand(board->GetWall());
 	delete board;
 }

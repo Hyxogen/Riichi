@@ -1,4 +1,5 @@
 #include "Board.hpp"
+#include "Hand.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -50,6 +51,54 @@ void Board::PrintWall(const Wall* wall) {
 	printf("]\n");
 }
 
+void Board::PrintWallWithHand(const Wall* wall) {
+	bool start = 1;
+	printf("[");
+	for (int i = 0; i < NUM_TILES; i++) {
+		if (!start)
+			printf(", ");
+		else
+			start = 0;
+		Hand::PrintTile(Board::ConvertToHandTile(wall->at(i)));
+		//PrintTile(wall->at(i));
+	}
+	printf("]\n");
+}
+
+/*
+UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUDDDWWWWSSSSSSSSSMMMMMMMMMPPPPPPPPP
+0b0000000000000000000000000000000100000000000000000000000000000000
+0b0000000000000000000000000000000100000000000000000000000000000000
+*/
+uint64 Board::ConvertToHandTile(Tile tile) {
+	uint64 ret = 0;
+	switch (tile & TILE_MASK_TYPE) {
+	case TILE_MASK_TYPE_PINZU:
+		ret = (HAND_TILE_START_PINZU << ((tile & TILE_MASK_NORMAL) - 1));
+		break;
+		//return (HAND_TILE_START_PINZU << (tile & TILE_MASK_NORMAL));
+	case TILE_MASK_TYPE_MANZU:
+		ret = (HAND_TILE_START_MANZU << ((tile & TILE_MASK_NORMAL) - 1));
+		break;
+	case TILE_MASK_TYPE_SOUZU:
+		ret = (HAND_TILE_START_SOUZU << ((tile & TILE_MASK_NORMAL) - 1));
+		break;
+	case TILE_MASK_TYPE_JIHAI:
+		if (tile & TILE_MASK_DRAGON) {
+			int64 temp = (((tile & TILE_MASK_DRAGON) >> TILE_OFFSET_DRAGON) - 1);
+			ret = (HAND_TILE_START_DRAGONS << temp);
+		}
+		else {
+			int64 temp = (((tile & TILE_MASK_WIND) >> TILE_OFFSET_WIND));
+			ret = (HAND_TILE_START_WINDS << temp);
+		}
+		break;
+	default:
+		return -1;
+	}
+	return ret;
+}
+
 Wall* Board::GenerateClean() const {
 	Wall* ret = new Wall();
 	int t, i;
@@ -96,19 +145,19 @@ Tile Board::GetTile(int type, int value) const {
 void Board::PrintTile(Tile tile) {
 	switch (tile & TILE_MASK_TYPE) {
 	case TILE_MASK_TYPE_PINZU:
-		printf("p%u", tile & TILE_MASK_NORMAL);
+		printf("P%u", tile & TILE_MASK_NORMAL);
 		break;
 	case TILE_MASK_TYPE_MANZU:
-		printf("m%u", tile & TILE_MASK_NORMAL);
+		printf("M%u", tile & TILE_MASK_NORMAL);
 		break;
 	case TILE_MASK_TYPE_SOUZU:
-		printf("s%u", tile & TILE_MASK_NORMAL);
+		printf("S%u", tile & TILE_MASK_NORMAL);
 		break;
 	case TILE_MASK_TYPE_JIHAI:
 		if (tile & TILE_MASK_DRAGON)
-			printf("d%u", tile & TILE_MASK_DRAGON);
+			printf("D%u", ((tile & TILE_MASK_DRAGON) >> TILE_OFFSET_DRAGON));
 		else
-			printf("w%u", tile & TILE_MASK_WIND);
+			printf("W%u", ((tile & TILE_MASK_WIND) >> TILE_OFFSET_WIND));
 		break;
 	default:
 		printf("UNK");

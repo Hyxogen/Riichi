@@ -147,6 +147,7 @@
     <ClInclude Include="Source\Board.hpp" />
     <ClInclude Include="Source\Hand.hpp" />
     <ClInclude Include="Source\Player.hpp" />
+    <ClInclude Include="Source\Tile.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

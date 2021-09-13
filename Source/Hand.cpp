@@ -7,7 +7,7 @@ Hand::Hand() {
 }
 
 int32 Hand::HasTile(uint64 tile) const {
-	return GetTileBitSet(tile) & TILE_MASK_VAL;
+	return GetTileBitSet(tile) & HAND_TILE_MASK_VAL;
 }
 
 bool Hand::DiscardTile(uint64 tile) { // Deze werkt niet zo goed
@@ -15,7 +15,7 @@ bool Hand::DiscardTile(uint64 tile) { // Deze werkt niet zo goed
 	if (pos < 0)
 		return true;
 	byte bitset = GetTileBitSet(tile);
-	if ((bitset & TILE_MASK_VAL) == 0)
+	if ((bitset & HAND_TILE_MASK_VAL) == 0)
 		return true;
 	SetTileBitSet(tile, bitset - 1);
 	return false;
@@ -26,7 +26,7 @@ bool Hand::AddTile(uint64 tile) {
 	if (pos < 0)
 		return true;
 	byte bitset = GetTileBitSet(tile);
-	if ((bitset & TILE_MASK_DORA) == 0 && (bitset & TILE_MASK_VAL) > 3)
+	if ((bitset & HAND_TILE_MASK_DORA) == 0 && (bitset & HAND_TILE_MASK_VAL) > 3)
 		return true;
 	SetTileBitSet(tile, bitset + 1);
 	//m_Hand[pos] ^= tile;
@@ -58,6 +58,33 @@ void Hand::PrintHand() const {
 		}
 	}
 	printf("]\n");
+}
+
+void Hand::PrintTile(uint64 tile) {
+	char type;
+	byte val = 0;
+	if (tile & HAND_TILE_MASK_PINZU)
+		type = 'P';
+	else if (tile & HAND_TILE_MASK_MANZU)
+		type = 'M';
+	else if (tile & HAND_TILE_MASK_SOUZU)
+		type = 'S';
+	else if (tile & HAND_TILE_MASK_WINDS)
+		type = 'W';
+	else if (tile & HAND_TILE_MASK_DRAGONS)
+		type = 'D';
+	else
+		type = 'U';
+	if (type == 'U') {
+		printf("ERR");
+		return;
+	}
+	while (val < 64) {
+		if (tile & (1ull << val))
+			break;
+		val++;
+	}
+	printf("%c%u", type, type == 'W' ? (++val % 4) : (type == 'D' ? ((--val % 3) + 1) : ((val % 9) + 1)));
 }
 
 char Hand::HasTileQuick(uint64 tile) const { //Deze kan miss inline
